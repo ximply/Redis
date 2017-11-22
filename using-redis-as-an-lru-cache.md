@@ -86,7 +86,7 @@ Redis 不使用正真的 LRU 实现的原因是它会消耗更多内存. 然而�
 
 不过你可以增大样本数到 10 来近似真正的 LRU, 只是需要消耗额外的 CPU, 然后确认在缓存击穿率上是否不一样.
 
-在生产环境上使用不同的样本数进行试验可以通过使用 CONFIG SET maxmemory-samples <count> 这个命令, 非常简单.
+在生产环境上使用不同的样本数进行试验可以通过使用 CONFIG SET maxmemory-samples [count] 这个命令, 非常简单.
 
 ### LFU 这个新模式
 
