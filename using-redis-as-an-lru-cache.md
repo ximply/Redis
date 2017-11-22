@@ -1,12 +1,12 @@
 # [原文链接](https://redis.io/topics/lru-cache#using-redis-as-an-lru-cache)
 
-# Redis 用作 LRU 缓存
+# Redis 做为 LRU 缓存
 ## 目录
 * [最大内存配置指令](#最大内存配置指令)
 * [回收策略](#回收策略)
 * [回收进程是如何工作的](#回收进程是如何工作的)
 * [近似的最近最少访问算法](#近似的最近最少访问算法)
-* [新模式-最近频繁访问](#新模式-最近频繁访问)
+* [新模式-最不经常访问](#新模式-最不经常访问)
 
 当 Redis 用作缓存时, 当你添加新数据时它通常会将旧数据进行自动回收处理. 这个行为在社区开发者中是众所周知的, 因为这是当下流行的内存缓存系统默认的行为.
 
@@ -94,5 +94,13 @@ Redis 不使用正真的 LRU 实现的原因是它会消耗更多内存. 然而�
 
 在生产环境上使用不同的样本数进行试验可以通过使用 CONFIG SET maxmemory-samples [count] 这个命令, 非常简单.
 
-### 新模式-最近频繁访问
+### 新模式-最不经常访问
+从 Redis 4.0 开始, 有个 [最不经常访问回收模式](http://antirez.com/news/109) 可以使用. 这个模式在某些场景下可能会工作的更好 (提供一个更好的 命中/击穿 率), 由于使用 LFU Redis 将会记录 items 的访问频率, 这样的话, 很少使用的那些会被回收, 相比之下那些经常使用的更有机会留在内存中.
+
+如果你想想看 LRU, 一个最近访问过的但是实际几乎没有请求过的 item, 则不会过期, 这样的风险在于回收将来更有机会被请求的 key. LFU 没有这个问题, 而且 一般能够更好地适配不同的访问方式.
+
+那些采样信息和 LRU 的结果一样 (正如本文档前面一节所解释的), 是为了选择一个可以回收的候选者.
+
+然而和 LRU 不同, LFU 有一些可调参数: for instance, how fast should a frequent item lower in rank if it gets no longer accessed? It is also possible to tune the Morris counters range in order to better adapt the algorithm to specific use cases.
+
 
