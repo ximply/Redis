@@ -101,6 +101,12 @@ Redis 不使用正真的 LRU 实现的原因是它会消耗更多内存. 然而�
 
 那些采样信息和 LRU 的结果一样 (正如本文档前面一节所解释的), 是为了选择一个可以回收的候选者.
 
-然而和 LRU 不同, LFU 有一些可调参数: for instance, how fast should a frequent item lower in rank if it gets no longer accessed? It is also possible to tune the Morris counters range in order to better adapt the algorithm to specific use cases.
+然而和 LRU 不同, LFU 有一些可调参数: 例如, 一个频繁访问的 item 可以多快降到低级别, 如果它不再访问的话? 为了更好的将算法适配于特定场景还可以 微调 Morris 计数器范围.
+
+Redis 4.0 默认配置是:
+
+* 大约100万个请求可以达到计数器饱和值.
+* 计数器按分钟减小.
+
 
 
