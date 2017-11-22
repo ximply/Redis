@@ -57,3 +57,14 @@ Volatile-lru 和 volatile-random 这两个策略主要用于既做为缓存同�
 
 ### 近似的 LRU 算法
 Redis LRU 算法算不上准确的实现. 这意味着 Redis 无法获得回收的最优解, 也就是说, 这些访问是在过去一段时间内的最多访问. 换句话说, 会执行一个近似的 LRU 算法, 通过对小部分的 keys 进行采样, 然后回收采样的 keys 中最优的一个 (访问时间最早的).
+
+然而从 Redis 3.0 开始这个算法有提升, 可以进行批量回收. 这次算法性能的提升, 使得它的行为更接近真正的 LRU 算法.
+
+关于 Redis LRU 算法的关键是你可以测试算法的精度, 每次回收可以通过修改样本数量来检查. 这个参数通过以下配置指令控制:
+```Java
+maxmemory-samples 5
+```
+Redis 不使用正真的 LRU 实现的原因是它会消耗更多内存. 然而对于使用 Redis 的应用来说这个近似是等价的. 下图是 Redis 使用近似的 LRU 和 使用真正的 LRU 的一个对比.
+
+![](https://redis.io/images/redisdoc/lru_comparison.png)
+
